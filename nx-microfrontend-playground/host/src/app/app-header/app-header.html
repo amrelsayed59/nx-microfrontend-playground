@@ -1,0 +1,48 @@
+<header class="header">
+  <div class="header-inner">
+    <a routerLink="/" class="brand" aria-label="Nova Commerce home">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span class="brand-name">Nova<span class="brand-accent">Commerce</span></span>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link"
+        >Home</a
+      >
+      <a routerLink="/products" routerLinkActive="active" class="nav-link"
+        >Products</a
+      >
+      <a routerLink="/orders" routerLinkActive="active" class="nav-link"
+        >Orders</a
+      >
+    </nav>
+
+    <div class="actions">
+      <button type="button" class="icon-button" aria-label="Notifications">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span class="notification-dot" aria-hidden="true"></span>
+      </button>
+
+      <button type="button" class="avatar" aria-label="Account menu">
+        {{ userInitials }}
+      </button>
+    </div>
+  </div>
+</header>

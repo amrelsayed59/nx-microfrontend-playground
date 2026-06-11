@@ -1,0 +1,14 @@
+{
+  "name": "products",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "products/src",
+  "projectType": "application",
+  "tags": ["scope:products", "type:app"],
+  "targets": {
+    "serve": {
+      "options": {
+        "port": 4201
+      }
+    }
+  }
+}

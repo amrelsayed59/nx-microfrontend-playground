@@ -1,0 +1,68 @@
+<div class="home">
+  <section class="hero">
+    <span class="badge">Micro Frontend Platform</span>
+    <h1 class="hero-title">Welcome to Nova Commerce</h1>
+    <p class="hero-subtitle">
+      A production-style micro frontend platform. The shell you are looking at
+      is Angular — the Products experience is a React application loaded at
+      runtime through Module Federation.
+    </p>
+  </section>
+
+  <section class="grid" aria-label="Platform modules">
+    <a routerLink="/products" class="card">
+      <div class="card-icon" aria-hidden="true">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m7.5 4.27 9 5.15" />
+          <path
+            d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
+          />
+          <path d="m3.3 7 8.7 5 8.7-5" />
+          <path d="M12 22V12" />
+        </svg>
+      </div>
+      <h2 class="card-title">Products</h2>
+      <p class="card-text">
+        Catalog management, served by the React remote on an independent
+        deployment lifecycle.
+      </p>
+      <span class="card-meta">React · Module Federation</span>
+    </a>
+
+    <a routerLink="/orders" class="card">
+      <div class="card-icon" aria-hidden="true">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="8" cy="21" r="1" />
+          <circle cx="19" cy="21" r="1" />
+          <path
+            d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+          />
+        </svg>
+      </div>
+      <h2 class="card-title">Orders</h2>
+      <p class="card-text">
+        Order management, served by the Vue remote on an independent deployment
+        lifecycle.
+      </p>
+      <span class="card-meta">Vue · Module Federation</span>
+    </a>
+  </section>
+</div>
