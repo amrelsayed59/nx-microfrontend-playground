@@ -48,6 +48,11 @@ export default {
     module: true,
     chunkFormat: 'module',
     chunkLoading: 'import',
+    // Inject the standalone index.html entry as <script type="module">.
+    // ESM output uses import.meta, which classic scripts cannot execute.
+    // Only affects standalone mode; the federated host imports remoteEntry.mjs
+    // directly and never loads this index.html.
+    scriptType: 'module',
   },
   experiments: {
     outputModule: true,

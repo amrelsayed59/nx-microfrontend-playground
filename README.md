@@ -79,9 +79,10 @@ nx-microfrontend-playground/
 │   └── src/
 │       ├── remote-entry.ts            # mount() contract implementation
 │       └── app/
-│           ├── pages/products-page/   # smart: search, loading, filtering
-│           ├── components/            # product-table, search-input, empty-state
-│           └── data/
+│           ├── store/                 # Redux store + typed hooks
+│           ├── features/products/     # Product Management (CRUD) feature
+│           ├── shared/components/     # generic reusable components (modal)
+│           └── components/            # search-input, empty-state
 ├── orders/                        # Vue remote (scope:orders)
 │   ├── module-federation.config.ts
 │   ├── rspack.config.ts               # + vue-loader, same ESM settings
@@ -153,6 +154,98 @@ The Vue remote follows the identical sequence — the only framework-specific co
 **Design system across frameworks:** tokens (spacing, color, typography, radii, shadows) are CSS custom properties on `:root`. Because host and remotes share one DOM document, the variables cascade into React and Vue content with zero shared component code. Each remote also carries a copy of the token sheet for standalone development.
 
 **TypeScript:** federated modules are virtual — `host/src/remotes.d.ts` declares the `mount` signature for `products/Module` and `orders/Module`. tsconfig path aliases are reserved for workspace libraries (`@org/shared-models`); pointing one at a federated module breaks the runtime handshake (learned the hard way — see Lessons Learned).
+
+## Product Management Module
+
+The Products remote contains a full CRUD **Product Management** feature built on
+the latest **Redux Toolkit** (RTK 2.x) + **React Redux** (v9). It demonstrates
+state management inside a federated remote without touching the host or the
+`mount()` contract.
+
+**Capabilities:** list products, search (name + description), create (validated
+form), edit (pre-filled form), and delete (confirmation dialog) — all backed by
+a single Redux store seeded with 5 sample products.
+
+### Feature-based structure
+
+```text
+products/src/app/
+├── store/                          # remote-wide Redux infrastructure
+│   ├── store.ts                       # configureStore + RootState/AppDispatch types
+│   └── hooks.ts                       # typed useAppDispatch / useAppSelector
+├── features/products/              # the Product Management feature
+│   ├── store/
+│   │   ├── products.slice.ts          # createSlice: add/update/delete reducers
+│   │   ├── products.selectors.ts      # memoised selectors (createSelector)
+│   │   └── products.seed.ts           # 5 seed products
+│   ├── hooks/use-products.ts          # facade: selectors + dispatch + search state
+│   ├── components/
+│   │   ├── product-table/             # table with edit/delete row actions
+│   │   ├── product-form/              # create/edit form with validation
+│   │   └── confirm-delete/            # delete confirmation body
+│   ├── pages/products-management-page/ # smart page composing the above
+│   └── types/product-form.types.ts    # ProductDraft, ProductFormErrors
+├── shared/components/modal/        # generic reusable modal (no domain knowledge)
+└── components/                     # search-input, empty-state (reused by the feature)
+```
+
+### Architecture decisions
+
+- **Redux `<Provider>` lives in `app.tsx`, not the entry files.** Both the
+  standalone `bootstrap.tsx` and the federated `remote-entry.ts` render `<App />`,
+  so wrapping `App` gives every mount the store **without modifying the Module
+  Federation `mount()` contract**. This is the single most important integration
+  decision in the module.
+- **A single module-level store** is shared across all mounts of the remote
+  (standard RTK pattern) — every instance of the feature observes the same catalog.
+- **`description` was added to the shared `Product` model as optional**
+  (`description?: string`) to stay backward-compatible: existing catalog entries
+  and cross-MFE consumers that predate the field remain valid against the contract.
+- **`id` stays `number`** (generated as `max(existing) + 1` inside the reducer,
+  which has state access) rather than switching to UUID strings, which would have
+  broken the existing contract and its consumers.
+- **No client-side router inside the remote.** View transitions (list → create →
+  edit → delete) are local component state via a typed discriminated union, not
+  routes — the Angular host owns routing, and a nested router would risk conflicts.
+- **A facade hook (`useProducts`)** keeps Redux wiring (selectors, dispatch, action
+  creators) in one place so presentational components stay store-agnostic.
+
+### Redux flow
+
+```text
+UI event (e.g. submit Add form)
+   │
+   ▼
+useProducts().create(draft)                 # facade hook
+   │  dispatch(addProduct(draft))
+   ▼
+productsSlice reducer (Immer)               # generates id, pushes to state.items
+   │
+   ▼
+store updates → selectors recompute (createSelector, memoised)
+   │
+   ▼
+useAppSelector re-renders the table         # typed, no `any`
+```
+
+Create dispatches a `ProductDraft` (no id); the reducer owns id generation.
+Update dispatches a full `Product`. Delete dispatches an `id: number`. All three
+are exported from the slice as typed action creators.
+
+### Connecting to a real API later
+
+The seed and synchronous reducers are the only things that change:
+
+1. Replace `products.seed.ts` with an RTK **`createAsyncThunk`** (`fetchProducts`)
+   or migrate the slice to **RTK Query** (`createApi`) for caching/invalidation.
+2. Add `loading` / `error` to `ProductsState` and handle the thunk's
+   `pending`/`fulfilled`/`rejected` in `extraReducers` — the table already has a
+   skeleton/empty-state pattern to bind to.
+3. Make `create`/`update`/`remove` dispatch thunks that POST/PUT/DELETE, then
+   reconcile server state (optimistic update or refetch).
+4. Components and the `useProducts` facade **do not change** — they already depend
+   on the facade, not on how data is fetched. This is why the data access is
+   isolated behind the slice/hook.
 
 ## Local Development
 

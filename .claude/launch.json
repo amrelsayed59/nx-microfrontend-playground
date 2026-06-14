@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "products",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "serve", "products"],
+      "cwd": "nx-microfrontend-playground",
+      "port": 4201
+    }
+  ]
+}
