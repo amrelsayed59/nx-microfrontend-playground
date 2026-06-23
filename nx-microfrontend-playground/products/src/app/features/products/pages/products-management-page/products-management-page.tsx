@@ -7,6 +7,7 @@ import { ConfirmDelete } from '../../components/confirm-delete/confirm-delete';
 import { ProductForm } from '../../components/product-form/product-form';
 import { ProductTable } from '../../components/product-table/product-table';
 import { useProducts } from '../../hooks/use-products';
+import { useAuth } from '../../../../auth/use-auth';
 import type { ProductDraft } from '../../types/product-form.types';
 import styles from './products-management-page.module.scss';
 
@@ -18,6 +19,11 @@ type Dialog =
 
 export function ProductsManagementPage() {
   const { filteredProducts, totalCount, query, setQuery, create, update, remove } = useProducts();
+  const { user, can } = useAuth();
+
+  const canCreate = can('product:create');
+  const canEdit = can('product:update');
+  const canDelete = can('product:delete');
 
   const [dialog, setDialog] = useState<Dialog>({ kind: 'none' });
   const close = () => setDialog({ kind: 'none' });
@@ -46,6 +52,13 @@ export function ProductsManagementPage() {
 
   return (
     <div className={styles['page']}>
+      {user ? (
+        <div className={styles['welcome']}>
+          <span className={styles['welcomeText']}>Welcome, {user.username}</span>
+          <span className={styles['welcomeRole']}>Role: {user.role}</span>
+        </div>
+      ) : null}
+
       <header className={styles['header']}>
         <div>
           <h1 className={styles['title']}>Product Management</h1>
@@ -53,27 +66,29 @@ export function ProductsManagementPage() {
             Create, edit, and remove products in the catalog.
           </p>
         </div>
-        <button
-          type="button"
-          className={styles['primaryButton']}
-          onClick={() => setDialog({ kind: 'create' })}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+        {canCreate ? (
+          <button
+            type="button"
+            className={styles['primaryButton']}
+            onClick={() => setDialog({ kind: 'create' })}
           >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-          </svg>
-          Add Product
-        </button>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+            Add Product
+          </button>
+        ) : null}
       </header>
 
       <div className={styles['toolbar']}>
@@ -93,13 +108,15 @@ export function ProductsManagementPage() {
           title="No products yet"
           description="Get started by adding your first product to the catalog."
           action={
-            <button
-              type="button"
-              className={styles['primaryButton']}
-              onClick={() => setDialog({ kind: 'create' })}
-            >
-              Add Product
-            </button>
+            canCreate ? (
+              <button
+                type="button"
+                className={styles['primaryButton']}
+                onClick={() => setDialog({ kind: 'create' })}
+              >
+                Add Product
+              </button>
+            ) : undefined
           }
         />
       ) : hasResults ? (
@@ -107,6 +124,8 @@ export function ProductsManagementPage() {
           products={filteredProducts}
           onEdit={(product) => setDialog({ kind: 'edit', product })}
           onDelete={(product) => setDialog({ kind: 'delete', product })}
+          canEdit={canEdit}
+          canDelete={canDelete}
         />
       ) : (
         <EmptyState

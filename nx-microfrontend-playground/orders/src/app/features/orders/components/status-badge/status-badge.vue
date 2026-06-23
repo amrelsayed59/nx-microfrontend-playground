@@ -9,8 +9,8 @@ const props = defineProps<{
 const statusClass = computed(() => {
   const classByStatus: Record<OrderStatus, string> = {
     Pending: 'pending',
-    Fulfilled: 'fulfilled',
-    Cancelled: 'cancelled',
+    Processing: 'processing',
+    Completed: 'completed',
   };
   return classByStatus[props.status];
 });
@@ -41,18 +41,18 @@ const statusClass = computed(() => {
   background: currentColor;
 }
 
-.fulfilled {
+.completed {
   background: var(--color-success-soft);
   color: var(--color-success);
+}
+
+.processing {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .pending {
   background: var(--color-warning-soft);
   color: var(--color-warning);
-}
-
-.cancelled {
-  background: var(--color-danger-soft);
-  color: var(--color-danger);
 }
 </style>

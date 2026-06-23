@@ -1,10 +1,10 @@
-export type OrderStatus = 'Pending' | 'Fulfilled' | 'Cancelled';
+export type OrderStatus = 'Pending' | 'Processing' | 'Completed';
 
 export interface Order {
   id: string;
-  customer: string;
-  /** ISO 8601 date (yyyy-mm-dd) */
-  date: string;
+  customerName: string;
+  productName: string;
+  quantity: number;
+  totalPrice: number;
   status: OrderStatus;
-  total: number;
 }

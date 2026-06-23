@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import App from './app/app.vue';
+import { pinia } from './app/stores/pinia';
 import './styles.scss';
 
-createApp(App).mount('#root');
+createApp(App).use(pinia).mount('#root');

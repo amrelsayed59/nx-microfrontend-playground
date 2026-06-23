@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import OrdersPage from './pages/orders-page/orders-page.vue';
+import OrdersManagementPage from './features/orders/pages/orders-management-page/orders-management-page.vue';
 </script>
 
 <template>
-  <OrdersPage />
+  <OrdersManagementPage />
 </template>

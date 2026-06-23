@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@org/shared-models": ["./libs/shared/models/src/index.ts"]
+      "@org/shared-models": ["./libs/shared/models/src/index.ts"],
+      "@org/shared-auth": ["./libs/shared-auth/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

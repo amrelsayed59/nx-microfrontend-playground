@@ -1,0 +1,64 @@
+<div class="login-page">
+  <div class="card">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">N</span>
+      <span class="brand-name">Nova<span class="brand-accent">Commerce</span></span>
+    </div>
+
+    <h1 class="title">Sign in</h1>
+    <p class="subtitle">Use a demo account to access the platform.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="field">
+        <label class="label" for="username">Username</label>
+        <input
+          id="username"
+          class="input"
+          type="text"
+          formControlName="username"
+          autocomplete="username"
+          [attr.aria-invalid]="
+            form.controls.username.touched && form.controls.username.invalid
+          "
+        />
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+          <p class="field-error">Username is required.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <input
+          id="password"
+          class="input"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          [attr.aria-invalid]="
+            form.controls.password.touched && form.controls.password.invalid
+          "
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="field-error">Password is required.</p>
+        }
+      </div>
+
+      @if (error()) {
+        <p class="form-error" role="alert">{{ error() }}</p>
+      }
+
+      <button type="submit" class="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
+
+    <div class="hint">
+      <p class="hint-title">Demo accounts</p>
+      <ul class="hint-list">
+        <li><code>admin</code> / <code>admin123</code> — full access</li>
+        <li><code>manager</code> / <code>manager123</code> — no delete</li>
+        <li><code>viewer</code> / <code>viewer123</code> — read only</li>
+      </ul>
+    </div>
+  </div>
+</div>

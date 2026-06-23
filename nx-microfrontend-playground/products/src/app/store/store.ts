@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { productsReducer } from '../features/products/store/products.slice';
+import { productEventsMiddleware } from './product-events.middleware';
 
 /**
  * Root store for the products remote.
@@ -13,6 +14,10 @@ export const store = configureStore({
   reducer: {
     products: productsReducer,
   },
+  // Listener middleware publishes cross-framework events as side effects of
+  // store actions (see product-events.middleware.ts).
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(productEventsMiddleware.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
